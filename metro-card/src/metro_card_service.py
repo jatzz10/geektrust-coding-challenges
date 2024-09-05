@@ -33,20 +33,21 @@ class MetroCardService:
         travel_charge_based_on_passenger_type = int(Passenger(passenger_type).get_travel_charge_based_on_passenger_type())
 
         metro_card = self.metro_card_dict.get(card_id)
+        # Calculate discount if applicable
+        if metro_card.card_swiped_for_one_way:
+            discounted_amount = travel_charge_based_on_passenger_type // 2
+            travel_charge_based_on_passenger_type = discounted_amount
+            travel_amount_charged += discounted_amount
+            discount_applied += discounted_amount
+        else:
+            travel_amount_charged += travel_charge_based_on_passenger_type
+
         # Check if metro card has sufficient balance for travel journey
         if metro_card.balance < travel_charge_based_on_passenger_type:
             # Calculate amount to be recharged
             amount_to_be_recharged = travel_charge_based_on_passenger_type - metro_card.balance
             metro_card.add_to_balance(amount_to_be_recharged)
             travel_amount_charged += int(amount_to_be_recharged * 0.02)
-
-        # Calculate discount if applicable
-        if metro_card.card_swiped_for_one_way:
-            discounted_amount = travel_charge_based_on_passenger_type // 2
-            travel_amount_charged += discounted_amount
-            discount_applied += discounted_amount
-        else:
-            travel_amount_charged += travel_charge_based_on_passenger_type
 
         # Update MetroCard data
         metro_card.deduct_from_balance(travel_amount_charged)
