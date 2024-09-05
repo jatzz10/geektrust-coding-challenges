@@ -1,12 +1,12 @@
-
 class MetroCard:
 
-    def __init__(self, card_id: str, balance: float) -> None:
+    def __init__(self, card_id: str, balance: int) -> None:
         self.card_id = card_id
         self.balance = balance
+        self.card_swiped_for_one_way = False
 
-    def has_sufficient_balance(self, cost_of_travel: float) -> bool:
-        return True if cost_of_travel <= self.balance else False
+    def add_to_balance(self, amount: int) -> None:
+        self.balance += amount
 
-    def recharge_balance(self, cost_of_travel: float) -> None:
-        self.balance += cost_of_travel + (0.02 * cost_of_travel)
+    def deduct_from_balance(self, amount: int) -> None:
+        self.balance -= amount
