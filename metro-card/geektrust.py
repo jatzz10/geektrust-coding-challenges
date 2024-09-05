@@ -1,6 +1,36 @@
 from sys import argv
-
 from src.metro_card_service import MetroCardService
+
+
+def read_file(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return file.readlines()
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+        exit(1)
+
+
+def parse_commands(file_lines):
+    commands = []
+    for line in file_lines:
+        command = line.strip()
+        command_words_list = command.split(" ")
+        commands.append(command_words_list)
+    return commands
+
+
+def execute_commands(commands, metro_card_service):
+    for command in commands:
+        first_word = command[0]
+        if first_word == "BALANCE":
+            metro_card_service.add_card_balance(command[1], int(command[2]))
+        elif first_word == "CHECK_IN":
+            metro_card_service.perform_check_in(command[1], command[2], command[3])
+        elif first_word == "PRINT_SUMMARY":
+            metro_card_service.print_summary()
+        else:
+            print("Invalid input command arguments found.")
 
 
 def main():
@@ -8,46 +38,11 @@ def main():
         print("Usage: python script.py <input_file>")
         exit(1)
     file_path = argv[1]
-    try:
-        with open(file_path, 'r') as file:
-            metro_card_service = MetroCardService()
-
-            for line in file:
-                command = line.strip()
-                command_words_list = command.split(" ")
-                first_word = command_words_list[0]
-
-                # Execute business logic
-                if first_word == "BALANCE":
-                    card_id = command_words_list[1]
-                    card_balance = int(command_words_list[2])
-                    metro_card_service.add_card_balance(card_id, card_balance)
-                elif first_word == "CHECK_IN":
-                    card_id = command_words_list[1]
-                    passenger_type = command_words_list[2]
-                    station_name = command_words_list[3]
-                    metro_card_service.perform_check_in(card_id, passenger_type, station_name)
-                elif first_word == "PRINT_SUMMARY":
-                    metro_card_service.print_summary()
-                else:
-                    print("Invalid input command arguments found.")
-
-    except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
-    except Exception as e:
-        print(f"Error: {str(e)}")
+    file_lines = read_file(file_path)
+    commands = parse_commands(file_lines)
+    metro_card_service = MetroCardService()
+    execute_commands(commands, metro_card_service)
 
 
 if __name__ == "__main__":
     main()
-
-#  """
-#     Sample code to read inputs from the file
-#
-#     if len(argv) != 2:
-#         raise Exception("File path not entered")
-#     file_path = argv[1]
-#     f = open(file_path, 'r')
-#     Lines = f.readlines()
-#     //Add your code here to process the input commands
-# """

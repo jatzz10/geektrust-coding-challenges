@@ -1,5 +1,5 @@
-from . import metro_card
 from enum import Enum
+from .constants import ADULT_TRAVEL_CHARGE, SENIOR_CITIZEN_TRAVEL_CHARGE, KID_TRAVEL_CHARGE
 
 
 class PassengerType(Enum):
@@ -9,9 +9,9 @@ class PassengerType(Enum):
 
 
 class PassengerTravelCharge(Enum):
-    ADULT = 200
-    SENIOR_CITIZEN = 100
-    KID = 50
+    ADULT = ADULT_TRAVEL_CHARGE
+    SENIOR_CITIZEN = SENIOR_CITIZEN_TRAVEL_CHARGE
+    KID = KID_TRAVEL_CHARGE
 
 
 class Passenger:
