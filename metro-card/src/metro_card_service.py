@@ -11,6 +11,12 @@ class MetroCardService:
         self.__metro_card_dict: Dict[str, MetroCard] = {}
         self.__station_stats_dict: Dict[str, StationStats] = {}
 
+    def get_metro_card_dict(self):
+        return self.__metro_card_dict
+
+    def get_station_stats_dict(self):
+        return self.__station_stats_dict
+
     def add_card_balance(self, card_id: str, balance: int):
         """
         Method to add card balance to the MetroCard

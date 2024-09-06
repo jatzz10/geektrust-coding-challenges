@@ -17,7 +17,10 @@ class PassengerTravelCharge(Enum):
 class Passenger:
 
     def __init__(self, passenger_type: str) -> None:
-        self.passenger_type = passenger_type
+        self.__passenger_type = passenger_type
+
+    def get_passenger_type(self):
+        return self.__passenger_type
 
     def get_travel_charge_based_on_passenger_type(self):
-        return PassengerTravelCharge[self.passenger_type].value
+        return PassengerTravelCharge[self.__passenger_type].value
