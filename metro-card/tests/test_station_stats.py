@@ -1,5 +1,5 @@
 import unittest
-from ..src.station_stats import StationStats
+from src.station_stats import StationStats
 
 
 class TestStationStats(unittest.TestCase):

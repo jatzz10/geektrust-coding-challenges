@@ -1,5 +1,5 @@
 import unittest
-from ..src.passenger import Passenger, PassengerTravelCharge, PassengerType
+from src.passenger import Passenger, PassengerTravelCharge
 
 
 class TestPassenger(unittest.TestCase):

@@ -1,5 +1,5 @@
 import unittest
-from ..src.metro_card import MetroCard
+from src.metro_card import MetroCard
 
 
 class TestMetroCard(unittest.TestCase):

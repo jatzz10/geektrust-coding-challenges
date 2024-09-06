@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
-from ..src.metro_card_service import MetroCardService
-from ..src.passenger import Passenger
-from ..src.constants import DISCOUNT_DIVISOR
+from src.metro_card_service import MetroCardService
+from src.passenger import Passenger
+from src.constants import DISCOUNT_DIVISOR
 
 
 class TestMetroCardServices(unittest.TestCase):
