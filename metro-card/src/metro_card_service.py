@@ -22,48 +22,82 @@ class MetroCardService:
             metro_card = self.__metro_card_dict.get(card_id)
             metro_card.add_to_balance(balance)
 
-    def perform_check_in(self, card_id: str, passenger_type: str, station_name: str):
-        """
-        Method to perform calculation of travel charge, discount applied, and
-        update the station stats
-        """
-        travel_amount_charged = 0
-        discount_applied = 0
+    @staticmethod
+    def calculate_travel_charge(passenger_type: str):
+        travel_charge_based_on_passenger_type = int(Passenger(passenger_type).get_travel_charge_based_on_passenger_type())
+        return travel_charge_based_on_passenger_type
 
-        # Fetch travel_charge_based_on_passenger_type
-        travel_charge_based_on_passenger_type: int = int(Passenger(passenger_type).get_travel_charge_based_on_passenger_type())
-
+    def apply_discount(self, travel_amount_charged: int, card_id: str):
         metro_card = self.__metro_card_dict.get(card_id)
-        # Calculate discount if applicable
         if metro_card.get_card_swiped_for_one_way():
-            discounted_amount = travel_charge_based_on_passenger_type // DISCOUNT_DIVISOR
-            travel_charge_based_on_passenger_type = discounted_amount
-            travel_amount_charged += discounted_amount
-            discount_applied += discounted_amount
-        else:
-            travel_amount_charged += travel_charge_based_on_passenger_type
+            discounted_amount = travel_amount_charged // DISCOUNT_DIVISOR
+            return discounted_amount
+        return 0
 
-        # Check if metro card has sufficient balance for travel journey
-        if metro_card.get_balance() < travel_charge_based_on_passenger_type:
-            # Calculate amount to be recharged
-            amount_to_be_recharged = travel_charge_based_on_passenger_type - metro_card.get_balance()
+    def handle_insufficient_balance(self, card_id: str, travel_amount_charged: int):
+        metro_card = self.__metro_card_dict.get(card_id)
+        if metro_card.get_balance() < travel_amount_charged:
+            amount_to_be_recharged = travel_amount_charged - metro_card.get_balance()
             metro_card.add_to_balance(amount_to_be_recharged)
             travel_amount_charged += int(amount_to_be_recharged * RECHARGE_FEE_PERCENTAGE)
 
-        # Update MetroCard data
-        metro_card.deduct_from_balance(travel_amount_charged)
-        metro_card.set_card_swiped_for_one_way(not metro_card.get_card_swiped_for_one_way())
-
-        # Update MetroCard data with metro_card_dict
-        self.__metro_card_dict[card_id] = metro_card
-
-        # Calculate station stats
+    def update_station_stats(self, station_name: str, passenger_type: str, travel_amount_charged: int, discount_applied: int):
         if station_name in self.__station_stats_dict:
             station_stats = self.__station_stats_dict.get(station_name)
         else:
             station_stats = StationStats()
         station_stats.update_stats(passenger_type, travel_amount_charged, discount_applied)
         self.__station_stats_dict[station_name] = station_stats
+
+    def update_metro_card(self, card_id: str, travel_amount_charged: int):
+        metro_card = self.__metro_card_dict.get(card_id)
+        metro_card.deduct_from_balance(travel_amount_charged)
+        metro_card.set_card_swiped_for_one_way(not metro_card.get_card_swiped_for_one_way())
+        self.__metro_card_dict[card_id] = metro_card
+
+    def perform_check_in(self, card_id: str, passenger_type: str, station_name: str):
+        """
+        Method to perform calculation of travel charge, discount applied, and
+        update the station stats
+        """
+        travel_amount_charged = self.calculate_travel_charge(passenger_type)
+        discount_applied = self.apply_discount(travel_amount_charged, card_id)
+        travel_amount_charged = discount_applied if discount_applied > 0 else travel_amount_charged
+        self.handle_insufficient_balance(card_id, travel_amount_charged)
+        self.update_station_stats(station_name, passenger_type, travel_amount_charged, discount_applied)
+        self.update_metro_card(card_id, travel_amount_charged)
+
+        # metro_card = self.__metro_card_dict.get(card_id)
+        # # Calculate discount if applicable
+        # if metro_card.get_card_swiped_for_one_way():
+        #     discounted_amount = travel_charge_based_on_passenger_type // DISCOUNT_DIVISOR
+        #     travel_charge_based_on_passenger_type = discounted_amount
+        #     travel_amount_charged += discounted_amount
+        #     discount_applied += discounted_amount
+        # else:
+        #     travel_amount_charged += travel_charge_based_on_passenger_type
+
+        # Check if metro card has sufficient balance for travel journey
+        # if metro_card.get_balance() < travel_charge_based_on_passenger_type:
+        #     # Calculate amount to be recharged
+        #     amount_to_be_recharged = travel_charge_based_on_passenger_type - metro_card.get_balance()
+        #     metro_card.add_to_balance(amount_to_be_recharged)
+        #     travel_amount_charged += int(amount_to_be_recharged * RECHARGE_FEE_PERCENTAGE)
+        #
+        # # Update MetroCard data
+        # metro_card.deduct_from_balance(travel_amount_charged)
+        # metro_card.set_card_swiped_for_one_way(not metro_card.get_card_swiped_for_one_way())
+
+        # Update MetroCard data with metro_card_dict
+        # self.__metro_card_dict[card_id] = metro_card
+
+        # # Calculate station stats
+        # if station_name in self.__station_stats_dict:
+        #     station_stats = self.__station_stats_dict.get(station_name)
+        # else:
+        #     station_stats = StationStats()
+        # station_stats.update_stats(passenger_type, travel_amount_charged, discount_applied)
+        # self.__station_stats_dict[station_name] = station_stats
 
     def print_summary(self):
         # Sort the keys of station_stats_dict dictionary in ascending order
