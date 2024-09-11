@@ -17,6 +17,12 @@ class PassengerTravelCharge(Enum):
 class Passenger:
 
     def __init__(self, passenger_type: str) -> None:
+        """
+        Initialize a Passenger object.
+
+        Args:
+        - passenger_type: Type of passenger.
+        """
         self.__passenger_type = passenger_type
 
     def get_passenger_type(self):

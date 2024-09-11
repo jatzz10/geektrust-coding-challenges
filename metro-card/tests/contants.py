@@ -1,0 +1,27 @@
+# Common constants
+TRAVEL_AMOUNT_CHARGED_100: int = 100
+ADULT_PASSENGER_COUNT_1: int = 1
+TOTAL_AMOUNT_COLLECTED_100: int = 100
+BALANCE_100: int = 100
+BALANCE_200: int = 200
+
+# Constants for test_metro_card.py
+BALANCE_300: int = 300
+
+# Constants for test_station_stats.py
+TOTAL_AMOUNT_COLLECTED_0: int = 0
+TOTAL_DISCOUNT_GIVEN_0: int = 0
+TOTAL_DISCOUNT_GIVEN_50: int = 50
+DISCOUNT_APPLIED_50: int = 50
+DISCOUNT_GIVEN: int = 50
+
+# Constants for test_metro_card_service.py
+METRO_CARD_DICT_LENGTH_1: int = 1
+TRAVEL_AMOUNT_CHARGED_50: int = 50
+TRAVEL_AMOUNT_CHARGED_150: int = 150
+TRAVEL_AMOUNT_CHARGED_250: int = 250
+BALANCE_0: int = 0
+BALANCE_50: int = 50
+BALANCE_250: int = 250
+TOTAL_AMOUNT_COLLECTED_200: int = 200
+RECHARGE_FEE_251: int = 251

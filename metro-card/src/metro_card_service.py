@@ -3,11 +3,15 @@ from typing import Dict
 from .metro_card import MetroCard
 from .station_stats import StationStats
 from .passenger import Passenger
-from .constants import RECHARGE_FEE_PERCENTAGE, DISCOUNT_DIVISOR
+from .constants import (RECHARGE_FEE_PERCENTAGE, DISCOUNT_DIVISOR, SORT_BY_VALUE_DESCENDING, STATION_NAME_INDEX,
+                        PASSENGER_COUNT_INDEX, ZERO_DISCOUNT)
 
 
 class MetroCardService:
     def __init__(self) -> None:
+        """
+        Initialize a MetroCardService object.
+        """
         self.__metro_card_dict: Dict[str, MetroCard] = {}
         self.__station_stats_dict: Dict[str, StationStats] = {}
 
@@ -39,7 +43,7 @@ class MetroCardService:
         if metro_card.get_card_swiped_for_one_way():
             discounted_amount = travel_amount_charged // DISCOUNT_DIVISOR
             return discounted_amount
-        return 0
+        return ZERO_DISCOUNT
 
     def add_recharge_fee_if_insufficient_balance(self, card_id: str, travel_amount_charged: int):
         metro_card = self.__metro_card_dict.get(card_id)
@@ -67,10 +71,7 @@ class MetroCardService:
 
     @staticmethod
     def apply_discount_if_applicable(travel_charge: int, discount: int):
-        if discount > 0:
-            return discount
-        else:
-            return travel_charge
+        return discount if discount > ZERO_DISCOUNT else travel_charge
 
     def perform_check_in(self, card_id: str, passenger_type: str, station_name: str):
         """
@@ -85,18 +86,18 @@ class MetroCardService:
         self.update_metro_card(card_id, final_travel_charge)
 
     def print_summary(self):
-        # Sort the keys of station_stats_dict dictionary in ascending order
-        self.__station_stats_dict = dict(sorted(self.__station_stats_dict.items(), key=lambda x: x[0], reverse=True))
+        # Sort the keys of station_stats_dict dictionary in descending order
+        sorted_station_stats = dict(sorted(self.__station_stats_dict.items(), key=lambda x: x[STATION_NAME_INDEX], reverse=True))
 
-        for station_name, station_stats in self.__station_stats_dict.items():
+        for station_name, station_stats in sorted_station_stats.items():
             print(
                 f'TOTAL_COLLECTION {station_name} {station_stats.get_total_amount_collected()} {station_stats.get_total_discount_given()}')
             print('PASSENGER_TYPE_SUMMARY')
 
             # Sort the dictionary, first based on value in descending order, and then based on key in ascending order
             passenger_count_list_by_type = sorted(station_stats.get_passenger_type_count().items(),
-                                                  key=lambda x: (-x[1], x[0]))
+                                                  key=lambda x: (SORT_BY_VALUE_DESCENDING * x[PASSENGER_COUNT_INDEX], x[STATION_NAME_INDEX]))
 
             for passenger_count_tuple in passenger_count_list_by_type:
-                passenger_type, count = passenger_count_tuple[0], passenger_count_tuple[1]
+                passenger_type, count = passenger_count_tuple[STATION_NAME_INDEX], passenger_count_tuple[PASSENGER_COUNT_INDEX]
                 print(passenger_type, count)
