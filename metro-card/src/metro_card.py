@@ -12,7 +12,7 @@ class MetroCard:
         self.__balance = balance
         self.__card_swiped_for_one_way = False
 
-    def get_balance(self):
+    def get_balance(self) -> int:
         return self.__balance
 
     def get_card_swiped_for_one_way(self) -> bool:
