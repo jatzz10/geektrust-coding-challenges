@@ -2,6 +2,7 @@ package com.example.geektrust;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println("Sab Chunga ji....");
         /*
         Sample code to read from file passed as command line argument
         try {
