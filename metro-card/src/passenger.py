@@ -25,8 +25,8 @@ class Passenger:
         """
         self.__passenger_type = passenger_type
 
-    def get_passenger_type(self):
+    def get_passenger_type(self) -> str:
         return self.__passenger_type
 
-    def get_travel_charge_based_on_passenger_type(self):
+    def get_travel_charge_based_on_passenger_type(self) -> int:
         return PassengerTravelCharge[self.__passenger_type].value
